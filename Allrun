@@ -1,0 +1,29 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+
+runApplication mergeMeshes statorMesh rotorMesh
+
+cp -r statorMesh/0.0001/polyMesh constant
+
+touch foam.foam
+
+
+runApplication changeDictionary
+
+restore0Dir
+
+runApplication setFields
+
+
+runApplication decomposePar
+
+runParallel renumberMesh -overwrite
+
+runParallel $(getApplication)
+
+runApplication reconstructPar
+
+#------------------------------------------------------------------------------
